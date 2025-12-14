@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import os, sys
+import os
 from fcntl import ioctl
 
 # ioctl commands defined at the pci driver
@@ -18,6 +18,9 @@ def read_button():
     red_number = int.from_bytes(red, 'little')
     os.close(fd)
 
+    # IMPORTANTÍSSIMO: esses valores dependem do mapeamento no Quartus/Qsys.
+    # Para descobrir os valores corretos, use read_buttons_raw() e pressione os botões.
+
     if red_number == 7:
         return 'LEFT'
     elif red_number == 11:
@@ -30,6 +33,13 @@ def read_button():
         return "LEFT+RIGHT"
 
     return ''
+
+def read_buttons_raw():
+    fd = os.open("/dev/mydev", os.O_RDWR)
+    ioctl(fd, RD_PBUTTONS)
+    data = os.read(fd, 4)
+    os.close(fd)
+    return int.from_bytes(data, "little")
 
 def write_right_display(data):
     fd = os.open("/dev/mydev", os.O_RDWR)
@@ -70,8 +80,8 @@ def dec_to_7seg(number):
     }[number]
 
 def digit_to_7seg(numero):
-    digitos = str(numero).zfill(4)
+    digitos = str(numero).zfill(4)[-4:]
     segmentos = [dec_to_7seg(int(digito)) for digito in digitos]
     return int("".join(["{:02X}".format(segmento) for segmento in segmentos]), 16)
-    
+
 

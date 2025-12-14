@@ -68,13 +68,6 @@ class Mage:
         # Pontuação total
         self.score = 0
 
-    # Reseta mage para o meio da tela
-    def reset(self):
-        self.x = screen_width // 2
-        self.y = screen_height // 2
-        self.rect.center = (self.x, self.y)
-        self.score = 0
-
     # Desenha o mage na tela
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -176,7 +169,7 @@ def check_coin_collision():
                 special_coins_collected += 1
             else:
                 # Moeda normal → vale 1 ponto
-                mage.score += 1
+                mage.score += 2
                 normal_coins_collected += 1
 
             # Após pegar moeda, tenta spawnar outra
